@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-void main() {
+bool _speechEnabled = true;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final SpeechToText speech = SpeechToText();
+  _speechEnabled = await speech.initialize();
   runApp(MyApp());
 }
 
@@ -10,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Speech Demo',
+      title: 'Flutter Demo',
       home: MyHomePage(),
     );
   }
@@ -25,45 +30,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   SpeechToText _speechToText = SpeechToText();
-  bool _speechEnabled = false;
-  bool _isListening = false;
+  // bool _speechEnabled = false;
   String _lastWords = '';
 
-  final _textController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _initSpeech();
-  }
-
   /// This has to happen only once per app
-  void _initSpeech() async {
-    bool hasSpeech = await _speechToText.initialize(
-      onError: (val) => print('Error: $val'),
-      onStatus: (val) => print('Status: $val'),
-    );
-    setState(() {
-      _speechEnabled = hasSpeech;
-    });
-  }
 
   /// Each time to start a speech recognition session
   void _startListening() async {
-    _isListening = true;
-    _textController.clear();
-    await _speechToText.listen(
-      onResult: _onSpeechResult,
-      cancelOnError: true,
-      listenFor: Duration(seconds: 10),
-      pauseFor: Duration(seconds: 1),
-      partialResults: true,
-      localeId: 'en_US',
-      onSoundLevelChange: (double level) {
-        // Do something with the sound level, e.g. animate a microphone icon
-      },
-      // Enable continuous recognition
-    );
+    await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {});
   }
 
@@ -72,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   /// and the SpeechToText plugin supports setting timeouts on the
   /// listen method.
   void _stopListening() async {
-    _isListening = false;
     await _speechToText.stop();
     setState(() {});
   }
@@ -82,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _lastWords = result.recognizedWords;
-      _textController.text = _lastWords;
     });
   }
 
@@ -90,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Speech Demo'),
+        title: Text('Speech To Text App'),
       ),
       body: Center(
         child: Column(
@@ -106,12 +78,17 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: Container(
                 padding: EdgeInsets.all(16),
-                child: TextField(
-                  controller: _textController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    hintText: 'Tap the microphone to start listening...',
-                  ),
+                child: Text(
+                  // If listening is active show the recognized words
+                  _speechToText.isListening
+                      ? '$_lastWords'
+                      // If listening isn't active but could be tell the user
+                      // how to start it, otherwise indicate that speech
+                      // recognition is not yet ready or not supported on
+                      // the target device
+                      : _speechEnabled
+                          ? 'Tap the microphone to start listening...'
+                          : 'Speech not available',
                 ),
               ),
             ),
@@ -119,15 +96,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (_isListening) {
-            _stopListening();
-          } else {
-            _startListening();
-          }
-        },
+        onPressed:
+            // If not yet listening for speech start, otherwise stop
+            _speechToText.isNotListening ? _startListening : _stopListening,
         tooltip: 'Listen',
-        child: Icon(_isListening ? Icons.mic_off : Icons.mic),
+        child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
       ),
     );
   }
