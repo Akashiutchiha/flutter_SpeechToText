@@ -18,6 +18,53 @@ class _SpeechScreenState extends State<SpeechScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: FloatingActionButton(
+          backgroundColor: bgColor,
+          onPressed: () {},
+          child: GestureDetector(
+            onTapDown: (details) async {
+              if (!islistening) {
+                var available = await speechToText.initialize();
+                if (available) {
+                  setState(() {
+                    islistening = true;
+                    speechToText.listen(
+                      onResult: (result) {
+                        setState(() {
+                          text = result.recognizedWords;
+                        });
+                      },
+                    );
+                  });
+                }
+              }
+            },
+            onTapUp: (details) async {
+              setState(() {
+                islistening = false;
+              });
+              await speechToText.stop();
+            },
+            child: AvatarGlow(
+              glowColor: bgColor,
+              endRadius: 75.0,
+              animate: islistening,
+              child: CircleAvatar(
+                radius: 35,
+                backgroundColor: bgColor,
+                child: Icon(
+                  islistening ? Icons.mic : Icons.mic_none,
+                  color: Colors.white,
+                  size: 35,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: bgColor,
         title: const Text(
@@ -44,45 +91,6 @@ class _SpeechScreenState extends State<SpeechScreen> {
             Expanded(
               child: SizedBox(
                 height: 20,
-              ),
-            ),
-            GestureDetector(
-              onTapDown: (details) async {
-                if (!islistening) {
-                  var available = await speechToText.initialize();
-                  if (available) {
-                    setState(() {
-                      islistening = true;
-                      speechToText.listen(
-                        onResult: (result) {
-                          setState(() {
-                            text = result.recognizedWords;
-                          });
-                        },
-                      );
-                    });
-                  }
-                }
-              },
-              onTapUp: (details) async {
-                setState(() {
-                  islistening = false;
-                });
-                await speechToText.stop();
-              },
-              child: AvatarGlow(
-                glowColor: bgColor,
-                endRadius: 75.0,
-                animate: islistening,
-                child: CircleAvatar(
-                  radius: 35,
-                  backgroundColor: bgColor,
-                  child: Icon(
-                    islistening ? Icons.mic : Icons.mic_none,
-                    color: Colors.white,
-                    size: 35,
-                  ),
-                ),
               ),
             ),
             SizedBox(
