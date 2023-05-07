@@ -46,18 +46,21 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
                   SizedBox(
                     height: 25,
                   ),
-                  Container(
-                    height: 50,
-                    width: 150,
-                    child: Center(
-                        child: Text(
-                      "Speak",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w800, color: Colors.white),
-                    )),
-                    decoration: BoxDecoration(
-                      color: bgColor,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      height: 50,
+                      width: 150,
+                      child: Center(
+                          child: Text(
+                        "Speak",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, color: Colors.white),
+                      )),
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
                     ),
                   ),
                 ],
