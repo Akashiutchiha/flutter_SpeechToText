@@ -2,9 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text_app/colors.dart';
 import 'package:speech_to_text_app/speech_screen.dart';
 import 'package:speech_to_text_app/texttospeech_screen.dart';
+import 'package:speech_to_text_app/tts.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    TextToSpeech.WelcomeMessage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:speech_to_text_app/tts.dart';
 
 import 'colors.dart';
 
@@ -47,7 +48,9 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
                     height: 25,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      TextToSpeech.speak(controller.text);
+                    },
                     child: Container(
                       height: 50,
                       width: 150,
