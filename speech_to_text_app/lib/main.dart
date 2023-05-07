@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:speech_to_text_app/home_screen.dart';
 import 'package:speech_to_text_app/speech_screen.dart';
 
 void main() {
@@ -20,7 +21,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const SpeechScreen(),
+      // home: const SpeechScreen(),
+      home: HomeScreen(),
       debugShowCheckedModeBanner: false,
       title: "Speech to Text",
       theme: ThemeData(
