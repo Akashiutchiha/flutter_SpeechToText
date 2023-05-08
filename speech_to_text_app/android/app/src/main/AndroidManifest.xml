@@ -10,7 +10,7 @@
     </queries>
 
    <application
-        android:label="speech_to_text_app"
+        android:label="Texaudio"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
