@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:speech_to_text_app/home_screen.dart';
-import 'package:speech_to_text_app/speech_screen.dart';
 import 'package:speech_to_text_app/tts.dart';
 
 void main() {
